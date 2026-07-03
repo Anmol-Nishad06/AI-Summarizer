@@ -13,7 +13,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 
 #requried setups for apiand text extraction
 
-genai.configure(api_key="AIzaSyBDofcMOBA3Q-pVNrKeBsGC_NLBMqC2Fbo")
+genai.configure(api_key="${{secrets.MY_API_KEY}}")
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 #code below 
