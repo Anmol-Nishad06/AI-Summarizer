@@ -13,6 +13,8 @@ from reportlab.lib.styles import getSampleStyleSheet
 
 #requried setups for apiand text extraction
 
+pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+
 genai.configure(api_key="AIzaSyBDofcMOBA3Q-pVNrKeBsGC_NLBMqC2Fbo")
 model = genai.GenerativeModel("gemini-2.5-flash")
 
