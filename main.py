@@ -114,8 +114,12 @@ Your tasks are:
 Notes:
 {full_text}'''
 
-response = model.generate_content(prompt)
-st.text_area("Summary:", value=response.text, height=350)
+response = ""
+try:
+    response = model.generate_content(prompt)
+    st.text_area("Summary:", value=response.text, height=350)
+except Exception as e:
+    st.write(":red[Daily limit exceeded. Please try again later.]")
 
 def create_pdf(text,filename="Summary.pdf"):
     doc=SimpleDocTemplate(filename,pagesize=letter)
@@ -128,12 +132,15 @@ def create_pdf(text,filename="Summary.pdf"):
 
     return filename
 
-pdf_file=create_pdf(response.text,"summary_file")
+try:
+    pdf_file=create_pdf(response.text,"summary_file")
+    with open(pdf_file, "rb") as f:
+        st.download_button(
+            "Download PDF",
+            f,
+            "Summary.pdf",
+            "application/pdf"
+        )
+except Exception as e:
+    pass
 
-with open(pdf_file, "rb") as f:
-    st.download_button(
-        "Download PDF",
-        f,
-        "Summary.pdf",
-        "application/pdf"
-    )
