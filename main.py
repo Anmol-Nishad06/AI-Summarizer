@@ -15,7 +15,7 @@ from reportlab.lib.styles import getSampleStyleSheet
 
 pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
 
-genai.configure(api_key="AIzaSyBDofcMOBA3Q-pVNrKeBsGC_NLBMqC2Fbo")
+genai.configure(api_key="${{secrets.MY_API_KEY}}")
 model = genai.GenerativeModel("gemini-2.5-flash")
 
 #code below 
