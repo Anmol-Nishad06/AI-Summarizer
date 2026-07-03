@@ -3,6 +3,7 @@
 import streamlit as st 
 from PIL import Image
 import pytesseract
+import platform
 import pandas as pd
 from PyPDF2 import PdfReader
 import fitz
@@ -13,7 +14,10 @@ from reportlab.lib.styles import getSampleStyleSheet
 
 #requried setups for apiand text extraction
 
-pytesseract.pytesseract.tesseract_cmd = r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+if platform.system() == "Windows":
+    pytesseract.pytesseract.tesseract_cmd = (
+        r"C:\Program Files\Tesseract-OCR\tesseract.exe"
+    )
 
 genai.configure(api_key="${{secrets.MY_API_KEY}}")
 model = genai.GenerativeModel("gemini-2.5-flash")
