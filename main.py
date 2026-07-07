@@ -8,8 +8,10 @@ import pandas as pd
 from PyPDF2 import PdfReader
 import fitz
 import io
-import google.generativeai as genai
+import os
+from google import genai
 from reportlab.platypus import SimpleDocTemplate, Paragraph
+from reportlab.lib.pagesizes import letter
 from reportlab.lib.styles import getSampleStyleSheet
 
 #requried setups for apiand text extraction
@@ -19,8 +21,8 @@ if platform.system() == "Windows":
         r"C:\Program Files\Tesseract-OCR\tesseract.exe"
     )
 
-genai.configure(api_key="${{secrets.MY_API_KEY}}")
-model = genai.GenerativeModel("gemini-2.5-flash")
+client = genai.Client(api_key=st.secrets.get("GOOGLE_API_KEY", os.getenv("GOOGLE_API_KEY")))
+MODEL_NAME = "gemini-2.5-flash"
 
 #code below 
 st.title("Notes Summarizer")
@@ -74,7 +76,7 @@ if file is not None:
         if file.type in ["image/jpg", "image/png", "image/jpeg"]:
             st.image(file, caption="Uploaded Image", width=max(100,300))
             image=Image.open(file)
-            text = model.generate_content([
+            text = client.models.generate_content(model=MODEL_NAME, contents=[
                     "Extract all handwritten text exactly as written.",
                     image
                     ]) 
@@ -89,7 +91,7 @@ if file is not None:
                 for page in pdf:
                     pix=page.get_pixmap()
                     img=Image.open(io.BytesIO(pix.tobytes("png")))
-                    response = model.generate_content([
+                    response = client.models.generate_content(model=MODEL_NAME, contents=[
                     "Extract all handwritten text exactly as written.",
                     img
                     ]) 
@@ -122,10 +124,11 @@ Notes:
 
 response = ""
 try:
-    response = model.generate_content(prompt)
+    response = client.models.generate_content(model=MODEL_NAME, contents=prompt)
     st.text_area("Summary:", value=response.text, height=350)
 except Exception as e:
-    st.write(":red[Daily limit exceeded. Please try again later.]")
+    st.error(e)
+    st.write(":red[Rate limit exceeded. Please wait 40 sec before trying again.]")
 
 def create_pdf(text,filename="Summary.pdf"):
     doc=SimpleDocTemplate(filename,pagesize=letter)
