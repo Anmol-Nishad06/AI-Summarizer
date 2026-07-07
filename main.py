@@ -127,7 +127,7 @@ try:
     response = client.models.generate_content(model=MODEL_NAME, contents=prompt)
     st.text_area("Summary:", value=response.text, height=350)
 except Exception as e:
-    st.error(e)
+    # st.error(e)
     st.write(":red[Rate limit exceeded. Please wait 40 sec before trying again.]")
 
 def create_pdf(text,filename="Summary.pdf"):
